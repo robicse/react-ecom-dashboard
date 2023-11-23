@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
@@ -12,26 +13,68 @@ const ProductList = () => {
     result = await result.json();
     setProducts(result.result);
   };
-  console.warn(products);
+
+  const deleteProduct = async (id) => {
+    console.warn(id);
+    let result = await fetch(`http://localhost:5000/product/${id}`, {
+      method: "Delete",
+    });
+    result = await result.json();
+    if (result) {
+      getProducts();
+    }
+  };
+
+  const searchHandle = async (event) => {
+    const key = event.target.value;
+    if (key) {
+      let result = await fetch(`http://localhost:5000/search/${key}`);
+      result = await result.json();
+      console.log("result", result.result);
+      if (result) {
+        setProducts(result.result);
+      }
+    } else {
+      getProducts();
+    }
+  };
+
+  console.log("products?.length", products?.length);
+
   return (
     <div className="product-list">
       <h1>Product List</h1>
+      <input
+        type="text"
+        placeholder="Search Product"
+        className="search-product-box"
+        onChange={searchHandle}
+      />
       <ul>
         <li>SL NO</li>
         <li>Name</li>
         <li>Price</li>
         <li>Category</li>
-        <li>Brabd</li>
+        <li>Brand</li>
+        <li>Operation</li>
       </ul>
-      {products.map((item, index) => (
-        <ul>
-          <li>{index + 1}</li>
-          <li>{item?.name}</li>
-          <li>TK.{item?.price}</li>
-          <li>{item?.category}</li>
-          <li>{item?.brand}</li>
-        </ul>
-      ))}
+      {products && products?.length > 0 ? (
+        products?.map((item, index) => (
+          <ul>
+            <li>{index + 1}</li>
+            <li>{item?.name}</li>
+            <li>TK.{item?.price}</li>
+            <li>{item?.category}</li>
+            <li>{item?.brand}</li>
+            <li>
+              <button onClick={() => deleteProduct(item.id)}>Delete</button>
+              <Link to={`/update/${item.id}`}>Update</Link>
+            </li>
+          </ul>
+        ))
+      ) : (
+        <h1>NO Product Founds!</h1>
+      )}
     </div>
   );
 };
