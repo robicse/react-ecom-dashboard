@@ -32,6 +32,7 @@ const UpdateProduct = () => {
       body: JSON.stringify({ name, price, brand, category }),
       headers: {
         "content-type": "application/json",
+        authorization: `bearer ${JSON.parse(localStorage.getItem("token"))}`,
       },
     });
     result = await result.json();
