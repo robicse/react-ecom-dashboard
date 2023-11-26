@@ -9,23 +9,30 @@ const ProductList = () => {
   }, []);
 
   const getProducts = async () => {
+    // auth product lists
     let result = await fetch("http://localhost:5000/products", {
       headers: {
         authorization: `bearer ${JSON.parse(localStorage.getItem("token"))}`,
       },
     });
     result = await result.json();
-    setProducts(result.result);
+    console.log("result", result);
+    setProducts(result);
   };
 
   const deleteProduct = async (id) => {
-    console.warn(id);
-    let result = await fetch(`http://localhost:5000/product/${id}`, {
+    // let result = await fetch(`http://localhost:5000/products/${id}`, {
+    // auth product lists
+    let result = await fetch(`http://localhost:5000/products/${id}`, {
       method: "Delete",
       headers: {
         authorization: `bearer ${JSON.parse(localStorage.getItem("token"))}`,
       },
     });
+
+    if (result.status == 401) {
+      alert("This user is not owner of this product.");
+    }
     result = await result.json();
     if (result) {
       getProducts();
