@@ -35,8 +35,14 @@ const UpdateProduct = () => {
         authorization: `bearer ${JSON.parse(localStorage.getItem("token"))}`,
       },
     });
-    result = await result.json();
-    console.warn(result);
+    console.log('result',result)
+    if(result?.status === '401'){
+      alert('Only admin can access.')
+    }else{
+      result = await result.json();
+      console.warn('final result',result);
+    }
+    
     navigate("/");
   };
   return (
